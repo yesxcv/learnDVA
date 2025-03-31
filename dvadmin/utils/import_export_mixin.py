@@ -14,7 +14,7 @@ from rest_framework.request import Request
 from dvadmin.utils.import_export import import_to_data
 from dvadmin.utils.json_response import DetailResponse, SuccessResponse
 from dvadmin.utils.request_util import get_verbose_name
-from dvadmin.system.tasks import async_export_data
+# from dvadmin.system.tasks import async_export_data
 # from dvadmin.system.models import DownloadCenter
 
 

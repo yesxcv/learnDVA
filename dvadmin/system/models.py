@@ -10,6 +10,9 @@ from application import settings
 from dvadmin.utils.models import CoreModel,table_prefix
 import hashlib
 
+
+
+
 class Role(CoreModel):
     name = models.CharField(max_length=64, verbose_name="角色名称", help_text="角色名称")
     key = models.CharField(max_length=64, unique=True, verbose_name="权限字符", help_text="权限字符")
@@ -79,6 +82,26 @@ class Users(CoreModel,AbstractUser):
     def __str__(self):
         return  self.username
 
+
+class MessageCenter(CoreModel):
+    title = models.CharField(max_length=100,verbose_name="标题",help_text="title")
+    content = models.TextField(verbose_name="content",help_text="content")
+    target_type = models.IntegerField(default=0,verbose_name="target type",help_text="target type")
+    target_user = models.ManyToManyField(to=Users,related_name="user",through="MessageCenterTargetUser",through_fields=("messagecenter","users"),blank=True,verbose_name="target user")
+    target_role = models.ManyToManyField(to=Role,blank=True)
+    class Meta:
+        db_table = table_prefix + "message_center"
+        verbose_name = 'message center'
+        ordering = ('-create_datetime',)
+
+class MessageCenterTargetUser(CoreModel):
+    users = models.ForeignKey(Users,related_name="target_user",on_delete=models.CASCADE,db_constraint=False,verbose_name='relationuser',help_text="relation user")
+    messagecenter = models.ForeignKey(MessageCenter,on_delete=models.CASCADE,db_constraint=False,verbose_name='relation message',help_text='relation message')
+    is_read = models.BooleanField(default=False,blank=True,null=True,verbose_name='是否',help_text='is read')
+    class Meta:
+        db_table = table_prefix + 'message_center_target_user'
+        verbose_name='messagecenter target user sheet'
+        verbose_name_plural = verbose_name
 
 class MenuField(CoreModel):
     model = models.CharField(max_length=64, verbose_name='表名')

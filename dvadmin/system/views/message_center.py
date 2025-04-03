@@ -40,20 +40,20 @@ class MessageCenterSerializer(CustomModelSerializer):
         )
         return serializer.data
 
-    # def get_dept_info(self, instance, parsed_query):
-    #     dept = instance.target_dept.all()
-    #     # You can do what ever you want in here
-    #     # `parsed_query` param is passed to BookSerializer to allow further querying
-    #     from dvadmin.system.views.dept import DeptSerializer
-    #     serializer = DeptSerializer(
-    #         dept,
-    #         many=True,
-    #         parsed_query=parsed_query
-    #     )
-    #     return serializer.data
+    def get_dept_info(self, instance, parsed_query):
+        dept = instance.target_dept.all()
+        # You can do what ever you want in here
+        # `parsed_query` param is passed to BookSerializer to allow further querying
+        from dvadmin.system.views.dept import DeptSerializer
+        serializer = DeptSerializer(
+            dept,
+            many=True,
+            parsed_query=parsed_query
+        )
+        return serializer.data
 
     class Meta:
-        model = MessageCenter
+        model =MessageCenter
         fields = "__all__"
         read_only_fields = ["id"]
 
@@ -136,7 +136,9 @@ class MessageCenterViewSet(CustomModelViewSet):
     create_serializer_class = MessageCenterCreateSerializer
     extra_filter_backends = []
 
+
     def get_queryset(self):
+        print(141)
         if self.action == 'list':
             return MessageCenter.objects.filter(creator=self.request.user.id).all()
         return MessageCenter.objects.all()

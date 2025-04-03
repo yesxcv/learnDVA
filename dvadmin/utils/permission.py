@@ -63,6 +63,10 @@ class AdminPermission(BasePermission):
     """
 
     def has_permission(self, request, view):
+        print("\n=== 认证调试 ===")
+        print(f"原始 Authorization 头: {request.META.get('HTTP_AUTHORIZATION', '未找到')}")
+        print(f"用户认证状态: {request.user.is_authenticated}")
+
         if isinstance(request.user, AnonymousUser):
             return False
         # 判断是否是超级管理员
@@ -92,6 +96,7 @@ class CustomPermission(BasePermission):
     """自定义权限"""
 
     def has_permission(self, request, view):
+        print("=== 请求头信息 ===")
         if isinstance(request.user, AnonymousUser):
             return False
         # 判断是否是超级管理员
@@ -101,6 +106,8 @@ class CustomPermission(BasePermission):
             api = request.path  # 当前请求接口
             method = request.method  # 当前请求方法
             methodList = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH']
+            print(f"Checking permission for {method} {api}")  # 添加日志
+
             method = methodList.index(method)
             # ***接口白名单***
             api_white_list = ApiWhiteList.objects.values(permission__api=F('url'), permission__method=F('method'))
